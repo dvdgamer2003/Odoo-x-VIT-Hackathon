@@ -98,8 +98,8 @@ export declare class TemplateRoutingService {
                 createdAt: Date;
                 updatedAt: Date;
                 stepOrder: number;
-                isRequired: boolean;
                 roleLabel: string | null;
+                isRequired: boolean;
                 approverId: string;
                 templateId: string;
             })[];

@@ -7,21 +7,6 @@ export declare class ExpensesController {
     private readonly approvalsService;
     constructor(expensesService: ExpensesService, approvalsService: ApprovalsService);
     create(dto: CreateExpenseDto, user: any): Promise<{
-        submittedBy: {
-            id: string;
-            name: string;
-            email: string;
-        };
-        template: {
-            id: string;
-            name: string;
-        } | null;
-        routingRule: {
-            id: string;
-            minAmount: import("@prisma/client-runtime-utils").Decimal;
-            maxAmount: import("@prisma/client-runtime-utils").Decimal | null;
-            priority: number;
-        } | null;
         approvals: ({
             approver: {
                 id: string;
@@ -37,11 +22,26 @@ export declare class ExpensesController {
             isRequired: boolean;
             approverId: string;
             status: import("@prisma/client").$Enums.ApprovalStatus;
+            actionedAt: Date | null;
             isConditional: boolean;
             source: import("@prisma/client").$Enums.ApprovalActionSource;
-            actionedAt: Date | null;
             expenseId: string;
         })[];
+        routingRule: {
+            id: string;
+            minAmount: import("@prisma/client-runtime-utils").Decimal;
+            maxAmount: import("@prisma/client-runtime-utils").Decimal | null;
+            priority: number;
+        } | null;
+        submittedBy: {
+            id: string;
+            name: string;
+            email: string;
+        };
+        template: {
+            id: string;
+            name: string;
+        } | null;
         ocrJob: {
             id: string;
             createdAt: Date;
@@ -62,28 +62,19 @@ export declare class ExpensesController {
         companyCurrency: string | null;
         exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
         rateTimestamp: Date | null;
-        currentApprovalStepOrder: number | null;
-        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         category: import("@prisma/client").$Enums.ExpenseCategory;
         description: string;
         date: Date;
         status: import("@prisma/client").$Enums.ExpenseStatus;
         receiptUrl: string | null;
         ocrExtracted: boolean;
+        currentApprovalStepOrder: number | null;
+        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         submittedById: string;
         templateId: string | null;
         routingRuleId: string | null;
     }>;
     findAll(user: any, status?: ExpenseStatus, category?: string, page?: string, limit?: string): Promise<import("../../../common/utils/pagination.util").PaginatedResult<{
-        submittedBy: {
-            id: string;
-            name: string;
-            email: string;
-        };
-        template: {
-            id: string;
-            name: string;
-        } | null;
         approvals: ({
             approver: {
                 id: string;
@@ -99,11 +90,20 @@ export declare class ExpensesController {
             isRequired: boolean;
             approverId: string;
             status: import("@prisma/client").$Enums.ApprovalStatus;
+            actionedAt: Date | null;
             isConditional: boolean;
             source: import("@prisma/client").$Enums.ApprovalActionSource;
-            actionedAt: Date | null;
             expenseId: string;
         })[];
+        submittedBy: {
+            id: string;
+            name: string;
+            email: string;
+        };
+        template: {
+            id: string;
+            name: string;
+        } | null;
     } & {
         id: string;
         companyId: string;
@@ -115,14 +115,14 @@ export declare class ExpensesController {
         companyCurrency: string | null;
         exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
         rateTimestamp: Date | null;
-        currentApprovalStepOrder: number | null;
-        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         category: import("@prisma/client").$Enums.ExpenseCategory;
         description: string;
         date: Date;
         status: import("@prisma/client").$Enums.ExpenseStatus;
         receiptUrl: string | null;
         ocrExtracted: boolean;
+        currentApprovalStepOrder: number | null;
+        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         submittedById: string;
         templateId: string | null;
         routingRuleId: string | null;
@@ -136,21 +136,6 @@ export declare class ExpensesController {
         totalApprovedAmount: number | import("@prisma/client-runtime-utils").Decimal;
     }>;
     findOne(id: string, user: any): Promise<{
-        submittedBy: {
-            id: string;
-            name: string;
-            email: string;
-        };
-        template: {
-            id: string;
-            name: string;
-        } | null;
-        routingRule: {
-            id: string;
-            minAmount: import("@prisma/client-runtime-utils").Decimal;
-            maxAmount: import("@prisma/client-runtime-utils").Decimal | null;
-            priority: number;
-        } | null;
         approvals: ({
             approver: {
                 id: string;
@@ -166,11 +151,26 @@ export declare class ExpensesController {
             isRequired: boolean;
             approverId: string;
             status: import("@prisma/client").$Enums.ApprovalStatus;
+            actionedAt: Date | null;
             isConditional: boolean;
             source: import("@prisma/client").$Enums.ApprovalActionSource;
-            actionedAt: Date | null;
             expenseId: string;
         })[];
+        routingRule: {
+            id: string;
+            minAmount: import("@prisma/client-runtime-utils").Decimal;
+            maxAmount: import("@prisma/client-runtime-utils").Decimal | null;
+            priority: number;
+        } | null;
+        submittedBy: {
+            id: string;
+            name: string;
+            email: string;
+        };
+        template: {
+            id: string;
+            name: string;
+        } | null;
         ocrJob: {
             id: string;
             createdAt: Date;
@@ -191,14 +191,14 @@ export declare class ExpensesController {
         companyCurrency: string | null;
         exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
         rateTimestamp: Date | null;
-        currentApprovalStepOrder: number | null;
-        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         category: import("@prisma/client").$Enums.ExpenseCategory;
         description: string;
         date: Date;
         status: import("@prisma/client").$Enums.ExpenseStatus;
         receiptUrl: string | null;
         ocrExtracted: boolean;
+        currentApprovalStepOrder: number | null;
+        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         submittedById: string;
         templateId: string | null;
         routingRuleId: string | null;
@@ -214,14 +214,14 @@ export declare class ExpensesController {
         companyCurrency: string | null;
         exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
         rateTimestamp: Date | null;
-        currentApprovalStepOrder: number | null;
-        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         category: import("@prisma/client").$Enums.ExpenseCategory;
         description: string;
         date: Date;
         status: import("@prisma/client").$Enums.ExpenseStatus;
         receiptUrl: string | null;
         ocrExtracted: boolean;
+        currentApprovalStepOrder: number | null;
+        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         submittedById: string;
         templateId: string | null;
         routingRuleId: string | null;
