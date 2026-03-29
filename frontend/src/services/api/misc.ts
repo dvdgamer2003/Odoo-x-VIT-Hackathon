@@ -17,7 +17,7 @@ export const uploadApi = {
     const form = new FormData();
     form.append('file', file);
     return apiClient
-      .post('/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } })
+      .post('/upload/receipt', form, { headers: { 'Content-Type': 'multipart/form-data' } })
       .then((r) => r.data);
   },
 };
