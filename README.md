@@ -9,3 +9,4 @@ Security
 Usability
 Debugging Skill
 Database Design
+odoo hackthon 2026
