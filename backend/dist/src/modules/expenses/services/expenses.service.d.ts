@@ -35,8 +35,11 @@ export declare class ExpensesService {
             createdAt: Date;
             updatedAt: Date;
             stepOrder: number;
+            isRequired: boolean;
             approverId: string;
             status: import("@prisma/client").$Enums.ApprovalStatus;
+            isConditional: boolean;
+            source: import("@prisma/client").$Enums.ApprovalActionSource;
             actionedAt: Date | null;
             expenseId: string;
         })[];
@@ -60,6 +63,8 @@ export declare class ExpensesService {
         companyCurrency: string | null;
         exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
         rateTimestamp: Date | null;
+        currentApprovalStepOrder: number | null;
+        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         category: import("@prisma/client").$Enums.ExpenseCategory;
         description: string;
         date: Date;
@@ -97,8 +102,11 @@ export declare class ExpensesService {
             createdAt: Date;
             updatedAt: Date;
             stepOrder: number;
+            isRequired: boolean;
             approverId: string;
             status: import("@prisma/client").$Enums.ApprovalStatus;
+            isConditional: boolean;
+            source: import("@prisma/client").$Enums.ApprovalActionSource;
             actionedAt: Date | null;
             expenseId: string;
         })[];
@@ -113,6 +121,8 @@ export declare class ExpensesService {
         companyCurrency: string | null;
         exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
         rateTimestamp: Date | null;
+        currentApprovalStepOrder: number | null;
+        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         category: import("@prisma/client").$Enums.ExpenseCategory;
         description: string;
         date: Date;
@@ -151,8 +161,11 @@ export declare class ExpensesService {
             createdAt: Date;
             updatedAt: Date;
             stepOrder: number;
+            isRequired: boolean;
             approverId: string;
             status: import("@prisma/client").$Enums.ApprovalStatus;
+            isConditional: boolean;
+            source: import("@prisma/client").$Enums.ApprovalActionSource;
             actionedAt: Date | null;
             expenseId: string;
         })[];
@@ -176,6 +189,8 @@ export declare class ExpensesService {
         companyCurrency: string | null;
         exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
         rateTimestamp: Date | null;
+        currentApprovalStepOrder: number | null;
+        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         category: import("@prisma/client").$Enums.ExpenseCategory;
         description: string;
         date: Date;
@@ -197,6 +212,8 @@ export declare class ExpensesService {
         companyCurrency: string | null;
         exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
         rateTimestamp: Date | null;
+        currentApprovalStepOrder: number | null;
+        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         category: import("@prisma/client").$Enums.ExpenseCategory;
         description: string;
         date: Date;

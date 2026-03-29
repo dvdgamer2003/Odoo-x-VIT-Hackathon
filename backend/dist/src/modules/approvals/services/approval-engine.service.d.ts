@@ -1,50 +1,40 @@
 import { PrismaService } from '../../prisma/prisma.service';
 import { TemplateRoutingService } from './template-routing.service';
+import { ApprovalChainBuilderService } from './approval-chain-builder.service';
+import { ApprovalRuleEvaluatorService } from './approval-rule-evaluator.service';
+import { ApprovalAuditService } from './approval-audit.service';
 export declare class ApprovalEngineService {
     private prisma;
     private routingService;
+    private chainBuilder;
+    private ruleEvaluator;
+    private auditService;
     private readonly logger;
-    constructor(prisma: PrismaService, routingService: TemplateRoutingService);
+    constructor(prisma: PrismaService, routingService: TemplateRoutingService, chainBuilder: ApprovalChainBuilderService, ruleEvaluator: ApprovalRuleEvaluatorService, auditService: ApprovalAuditService);
     initializeApprovalChain(expenseId: string, companyId: string, convertedAmount: number, submittedById: string): Promise<void>;
     approve(expenseId: string, approverId: string, companyId: string, comments?: string): Promise<{
         status: string;
-        reason: string;
+        reason: "REQUIRED_REJECTION" | "SPECIFIC_APPROVER_OVERRIDE" | "HYBRID_RULE_SATISFIED" | "PERCENTAGE_RULE_SATISFIED" | "ALL_REQUIRED_STEPS_APPROVED" | "AWAITING_NEXT_STEP";
     }>;
     reject(expenseId: string, approverId: string, companyId: string, comments: string): Promise<{
         status: string;
+        reason: "REQUIRED_REJECTION" | "SPECIFIC_APPROVER_OVERRIDE" | "HYBRID_RULE_SATISFIED" | "PERCENTAGE_RULE_SATISFIED" | "ALL_REQUIRED_STEPS_APPROVED" | "AWAITING_NEXT_STEP";
     }>;
-    getPendingForApprover(approverId: string, companyId: string): Promise<{
-        myApprovalStep: {
-            expense: {
-                company: {
-                    id: string;
-                    defaultCurrency: string;
-                };
-                submittedBy: {
-                    id: string;
-                    name: string;
-                    email: string;
-                };
-            } & {
+    adminOverride(expenseId: string, adminId: string, companyId: string, action: 'APPROVE' | 'REJECT', comments?: string): Promise<{
+        status: string;
+        reason: "REQUIRED_REJECTION" | "SPECIFIC_APPROVER_OVERRIDE" | "HYBRID_RULE_SATISFIED" | "PERCENTAGE_RULE_SATISFIED" | "ALL_REQUIRED_STEPS_APPROVED" | "AWAITING_NEXT_STEP";
+    }>;
+    getPendingForApprover(approverId: string, companyId: string): Promise<any[]>;
+    getExpenseChain(expenseId: string, companyId: string): Promise<{
+        template: {
+            id: string;
+            name: string;
+        } | null;
+        approvals: ({
+            approver: {
                 id: string;
-                companyId: string;
-                createdAt: Date;
-                updatedAt: Date;
-                amount: import("@prisma/client-runtime-utils").Decimal;
-                currency: string;
-                convertedAmount: import("@prisma/client-runtime-utils").Decimal | null;
-                companyCurrency: string | null;
-                exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
-                rateTimestamp: Date | null;
-                category: import("@prisma/client").$Enums.ExpenseCategory;
-                description: string;
-                date: Date;
-                status: import("@prisma/client").$Enums.ExpenseStatus;
-                receiptUrl: string | null;
-                ocrExtracted: boolean;
-                submittedById: string;
-                templateId: string | null;
-                routingRuleId: string | null;
+                name: string;
+                email: string;
             };
         } & {
             comments: string | null;
@@ -52,20 +42,15 @@ export declare class ApprovalEngineService {
             createdAt: Date;
             updatedAt: Date;
             stepOrder: number;
+            isRequired: boolean;
             approverId: string;
             status: import("@prisma/client").$Enums.ApprovalStatus;
+            isConditional: boolean;
+            source: import("@prisma/client").$Enums.ApprovalActionSource;
             actionedAt: Date | null;
             expenseId: string;
-        };
-        company: {
-            id: string;
-            defaultCurrency: string;
-        };
-        submittedBy: {
-            id: string;
-            name: string;
-            email: string;
-        };
+        })[];
+    } & {
         id: string;
         companyId: string;
         createdAt: Date;
@@ -76,6 +61,8 @@ export declare class ApprovalEngineService {
         companyCurrency: string | null;
         exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
         rateTimestamp: Date | null;
+        currentApprovalStepOrder: number | null;
+        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         category: import("@prisma/client").$Enums.ExpenseCategory;
         description: string;
         date: Date;
@@ -85,9 +72,12 @@ export declare class ApprovalEngineService {
         submittedById: string;
         templateId: string | null;
         routingRuleId: string | null;
-    }[]>;
+    }>;
+    private processAction;
     private validateApproverAction;
+    private getApproverContext;
+    private getRuleConfig;
+    private buildActionComments;
     private getCurrentStep;
-    private evaluateConditionalRules;
     private finalizeExpense;
 }

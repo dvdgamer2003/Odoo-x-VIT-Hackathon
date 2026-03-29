@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -50,6 +51,41 @@ export class ApprovalsController {
     @CurrentUser() user: any,
   ) {
     return this.approvalsService.reject(expenseId, user.id, user.companyId, comments);
+  }
+
+  @Post(':expenseId/admin-override')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  adminOverride(
+    @Param('expenseId') expenseId: string,
+    @Body('action') action: 'APPROVE' | 'REJECT',
+    @Body('comments') comments: string,
+    @CurrentUser() user: any,
+  ) {
+    return this.approvalsService.adminOverride(
+      expenseId,
+      user.id,
+      user.companyId,
+      action,
+      comments,
+    );
+  }
+
+  @Get(':expenseId/chain')
+  getExpenseChain(
+    @Param('expenseId') expenseId: string,
+    @CurrentUser('companyId') companyId: string,
+  ) {
+    return this.approvalsService.getExpenseChain(expenseId, companyId);
+  }
+
+  @Get(':expenseId/timeline')
+  getExpenseTimeline(
+    @Param('expenseId') expenseId: string,
+    @CurrentUser('companyId') companyId: string,
+  ) {
+    return this.approvalsService.getExpenseTimeline(expenseId, companyId);
   }
 
   // ─── TEMPLATES ──────────────────────────────────────────────────────────────
@@ -111,6 +147,24 @@ export class ApprovalsController {
   @Roles(Role.ADMIN)
   deleteStep(@Param('id') id: string, @CurrentUser('companyId') companyId: string) {
     return this.approvalsService.deleteStep(id, companyId);
+  }
+
+  @Put('templates/:id/rules')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  upsertRuleConfig(
+    @Param('id') templateId: string,
+    @Body() dto: any,
+    @CurrentUser('companyId') companyId: string,
+  ) {
+    return this.approvalsService.upsertRuleConfig(templateId, companyId, dto);
+  }
+
+  @Get('templates/:id/rules')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  getRuleConfig(@Param('id') templateId: string, @CurrentUser('companyId') companyId: string) {
+    return this.approvalsService.getRuleConfig(templateId, companyId);
   }
 
   // ─── ROUTING RULES ──────────────────────────────────────────────────────────

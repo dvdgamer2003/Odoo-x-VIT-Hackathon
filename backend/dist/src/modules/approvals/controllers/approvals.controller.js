@@ -34,6 +34,15 @@ let ApprovalsController = class ApprovalsController {
     reject(expenseId, comments, user) {
         return this.approvalsService.reject(expenseId, user.id, user.companyId, comments);
     }
+    adminOverride(expenseId, action, comments, user) {
+        return this.approvalsService.adminOverride(expenseId, user.id, user.companyId, action, comments);
+    }
+    getExpenseChain(expenseId, companyId) {
+        return this.approvalsService.getExpenseChain(expenseId, companyId);
+    }
+    getExpenseTimeline(expenseId, companyId) {
+        return this.approvalsService.getExpenseTimeline(expenseId, companyId);
+    }
     createTemplate(dto, companyId) {
         return this.approvalsService.createTemplate(companyId, dto);
     }
@@ -54,6 +63,12 @@ let ApprovalsController = class ApprovalsController {
     }
     deleteStep(id, companyId) {
         return this.approvalsService.deleteStep(id, companyId);
+    }
+    upsertRuleConfig(templateId, dto, companyId) {
+        return this.approvalsService.upsertRuleConfig(templateId, companyId, dto);
+    }
+    getRuleConfig(templateId, companyId) {
+        return this.approvalsService.getRuleConfig(templateId, companyId);
     }
     createRoutingRule(dto, companyId) {
         return this.approvalsService.createRoutingRule(companyId, dto);
@@ -105,6 +120,35 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", void 0)
 ], ApprovalsController.prototype, "reject", null);
+__decorate([
+    (0, common_1.Post)(':expenseId/admin-override'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Param)('expenseId')),
+    __param(1, (0, common_1.Body)('action')),
+    __param(2, (0, common_1.Body)('comments')),
+    __param(3, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, Object]),
+    __metadata("design:returntype", void 0)
+], ApprovalsController.prototype, "adminOverride", null);
+__decorate([
+    (0, common_1.Get)(':expenseId/chain'),
+    __param(0, (0, common_1.Param)('expenseId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('companyId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], ApprovalsController.prototype, "getExpenseChain", null);
+__decorate([
+    (0, common_1.Get)(':expenseId/timeline'),
+    __param(0, (0, common_1.Param)('expenseId')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('companyId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], ApprovalsController.prototype, "getExpenseTimeline", null);
 __decorate([
     (0, common_1.Post)('templates'),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
@@ -176,6 +220,27 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], ApprovalsController.prototype, "deleteStep", null);
+__decorate([
+    (0, common_1.Put)('templates/:id/rules'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)('companyId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, String]),
+    __metadata("design:returntype", void 0)
+], ApprovalsController.prototype, "upsertRuleConfig", null);
+__decorate([
+    (0, common_1.Get)('templates/:id/rules'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)('companyId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], ApprovalsController.prototype, "getRuleConfig", null);
 __decorate([
     (0, common_1.Post)('routing-rules'),
     (0, common_1.UseGuards)(roles_guard_1.RolesGuard),

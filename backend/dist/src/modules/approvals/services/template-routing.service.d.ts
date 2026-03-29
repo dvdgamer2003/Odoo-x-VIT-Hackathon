@@ -98,6 +98,7 @@ export declare class TemplateRoutingService {
                 createdAt: Date;
                 updatedAt: Date;
                 stepOrder: number;
+                isRequired: boolean;
                 roleLabel: string | null;
                 approverId: string;
                 templateId: string;
@@ -130,4 +131,5 @@ export declare class TemplateRoutingService {
         issues: string[];
     }>;
     private validateNoOverlap;
+    private ensureCompanyHasActiveRouteOrDefault;
 }

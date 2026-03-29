@@ -1,51 +1,38 @@
+import { ConditionalRuleType } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ApprovalEngineService } from './approval-engine.service';
 import { TemplateRoutingService } from './template-routing.service';
+import { ApprovalAuditService } from './approval-audit.service';
 export declare class ApprovalsService {
     private prisma;
     private engine;
     private routingService;
-    constructor(prisma: PrismaService, engine: ApprovalEngineService, routingService: TemplateRoutingService);
+    private auditService;
+    constructor(prisma: PrismaService, engine: ApprovalEngineService, routingService: TemplateRoutingService, auditService: ApprovalAuditService);
     initializeApprovalChain(expenseId: string, companyId: string, convertedAmount: number, submittedById: string): Promise<void>;
     approve(expenseId: string, approverId: string, companyId: string, comments?: string): Promise<{
         status: string;
-        reason: string;
+        reason: "REQUIRED_REJECTION" | "SPECIFIC_APPROVER_OVERRIDE" | "HYBRID_RULE_SATISFIED" | "PERCENTAGE_RULE_SATISFIED" | "ALL_REQUIRED_STEPS_APPROVED" | "AWAITING_NEXT_STEP";
     }>;
     reject(expenseId: string, approverId: string, companyId: string, comments: string): Promise<{
         status: string;
+        reason: "REQUIRED_REJECTION" | "SPECIFIC_APPROVER_OVERRIDE" | "HYBRID_RULE_SATISFIED" | "PERCENTAGE_RULE_SATISFIED" | "ALL_REQUIRED_STEPS_APPROVED" | "AWAITING_NEXT_STEP";
     }>;
-    getPendingForApprover(approverId: string, companyId: string): Promise<{
-        myApprovalStep: {
-            expense: {
-                company: {
-                    id: string;
-                    defaultCurrency: string;
-                };
-                submittedBy: {
-                    id: string;
-                    name: string;
-                    email: string;
-                };
-            } & {
+    adminOverride(expenseId: string, adminId: string, companyId: string, action: 'APPROVE' | 'REJECT', comments?: string): Promise<{
+        status: string;
+        reason: "REQUIRED_REJECTION" | "SPECIFIC_APPROVER_OVERRIDE" | "HYBRID_RULE_SATISFIED" | "PERCENTAGE_RULE_SATISFIED" | "ALL_REQUIRED_STEPS_APPROVED" | "AWAITING_NEXT_STEP";
+    }>;
+    getPendingForApprover(approverId: string, companyId: string): Promise<any[]>;
+    getExpenseChain(expenseId: string, companyId: string): Promise<{
+        template: {
+            id: string;
+            name: string;
+        } | null;
+        approvals: ({
+            approver: {
                 id: string;
-                companyId: string;
-                createdAt: Date;
-                updatedAt: Date;
-                amount: import("@prisma/client-runtime-utils").Decimal;
-                currency: string;
-                convertedAmount: import("@prisma/client-runtime-utils").Decimal | null;
-                companyCurrency: string | null;
-                exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
-                rateTimestamp: Date | null;
-                category: import("@prisma/client").$Enums.ExpenseCategory;
-                description: string;
-                date: Date;
-                status: import("@prisma/client").$Enums.ExpenseStatus;
-                receiptUrl: string | null;
-                ocrExtracted: boolean;
-                submittedById: string;
-                templateId: string | null;
-                routingRuleId: string | null;
+                name: string;
+                email: string;
             };
         } & {
             comments: string | null;
@@ -53,20 +40,15 @@ export declare class ApprovalsService {
             createdAt: Date;
             updatedAt: Date;
             stepOrder: number;
+            isRequired: boolean;
             approverId: string;
             status: import("@prisma/client").$Enums.ApprovalStatus;
+            isConditional: boolean;
+            source: import("@prisma/client").$Enums.ApprovalActionSource;
             actionedAt: Date | null;
             expenseId: string;
-        };
-        company: {
-            id: string;
-            defaultCurrency: string;
-        };
-        submittedBy: {
-            id: string;
-            name: string;
-            email: string;
-        };
+        })[];
+    } & {
         id: string;
         companyId: string;
         createdAt: Date;
@@ -77,6 +59,8 @@ export declare class ApprovalsService {
         companyCurrency: string | null;
         exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
         rateTimestamp: Date | null;
+        currentApprovalStepOrder: number | null;
+        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         category: import("@prisma/client").$Enums.ExpenseCategory;
         description: string;
         date: Date;
@@ -86,10 +70,11 @@ export declare class ApprovalsService {
         submittedById: string;
         templateId: string | null;
         routingRuleId: string | null;
-    }[]>;
+    }>;
+    getExpenseTimeline(expenseId: string, companyId: string): Promise<any>;
     createTemplate(companyId: string, dto: {
         name: string;
-        conditionalRuleType?: string;
+        conditionalRuleType?: ConditionalRuleType;
         percentageThreshold?: number;
         specificApproverId?: string;
         isDefault?: boolean;
@@ -104,6 +89,7 @@ export declare class ApprovalsService {
             createdAt: Date;
             updatedAt: Date;
             stepOrder: number;
+            isRequired: boolean;
             roleLabel: string | null;
             approverId: string;
             templateId: string;
@@ -131,6 +117,7 @@ export declare class ApprovalsService {
             createdAt: Date;
             updatedAt: Date;
             stepOrder: number;
+            isRequired: boolean;
             roleLabel: string | null;
             approverId: string;
             templateId: string;
@@ -158,6 +145,7 @@ export declare class ApprovalsService {
             createdAt: Date;
             updatedAt: Date;
             stepOrder: number;
+            isRequired: boolean;
             roleLabel: string | null;
             approverId: string;
             templateId: string;
@@ -191,6 +179,7 @@ export declare class ApprovalsService {
         approverId: string;
         stepOrder: number;
         roleLabel?: string;
+        isRequired?: boolean;
     }): Promise<{
         approver: {
             id: string;
@@ -202,10 +191,19 @@ export declare class ApprovalsService {
         createdAt: Date;
         updatedAt: Date;
         stepOrder: number;
+        isRequired: boolean;
         roleLabel: string | null;
         approverId: string;
         templateId: string;
     }>;
+    upsertRuleConfig(templateId: string, companyId: string, dto: {
+        ruleType: ConditionalRuleType;
+        percentageThreshold?: number | null;
+        specificApproverId?: string | null;
+        requireAllRequiredApprovals?: boolean;
+        allowSpecificApproverOverride?: boolean;
+    }): Promise<any>;
+    getRuleConfig(templateId: string, companyId: string): Promise<any>;
     deleteStep(stepId: string, companyId: string): Promise<{
         message: string;
     }>;
@@ -292,6 +290,7 @@ export declare class ApprovalsService {
                 createdAt: Date;
                 updatedAt: Date;
                 stepOrder: number;
+                isRequired: boolean;
                 roleLabel: string | null;
                 approverId: string;
                 templateId: string;

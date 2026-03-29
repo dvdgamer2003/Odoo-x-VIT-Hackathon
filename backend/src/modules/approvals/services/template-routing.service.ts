@@ -127,22 +127,51 @@ export class TemplateRoutingService {
     const existing = await this.findOne(id, companyId);
 
     const newMin = dto.minAmount ?? Number(existing.minAmount);
-    const newMax = dto.maxAmount !== undefined ? dto.maxAmount : Number(existing.maxAmount);
+    const newMax = dto.maxAmount !== undefined ? dto.maxAmount : existing.maxAmount !== null ? Number(existing.maxAmount) : null;
+    const newPriority = dto.priority ?? existing.priority;
 
     if (newMax !== null && newMin >= newMax) {
       throw new BadRequestException('minAmount must be less than maxAmount');
     }
 
-    return this.prisma.templateRoutingRule.update({
+    if (newMin < 0) {
+      throw new BadRequestException('minAmount must be >= 0');
+    }
+
+    if (dto.templateId) {
+      const template = await this.prisma.approvalTemplate.findFirst({
+        where: { id: dto.templateId, companyId },
+      });
+      if (!template) {
+        throw new NotFoundException('Template not found');
+      }
+    }
+
+    await this.validateNoOverlap(
+      companyId,
+      newMin,
+      newMax ?? undefined,
+      newPriority,
+      id,
+    );
+
+    const updated = await this.prisma.templateRoutingRule.update({
       where: { id },
       data: dto,
       include: { template: { select: { id: true, name: true } } },
     });
+
+    if (updated.isActive === false) {
+      await this.ensureCompanyHasActiveRouteOrDefault(companyId);
+    }
+
+    return updated;
   }
 
   async deleteRule(id: string, companyId: string) {
     await this.findOne(id, companyId);
     await this.prisma.templateRoutingRule.delete({ where: { id } });
+    await this.ensureCompanyHasActiveRouteOrDefault(companyId);
     return { message: 'Routing rule deleted' };
   }
 
@@ -205,6 +234,19 @@ export class TemplateRoutingService {
           `Use a different priority to allow overlapping ranges.`,
         );
       }
+    }
+  }
+
+  private async ensureCompanyHasActiveRouteOrDefault(companyId: string) {
+    const [activeRoutes, defaultTemplate] = await Promise.all([
+      this.prisma.templateRoutingRule.count({ where: { companyId, isActive: true } }),
+      this.prisma.approvalTemplate.findFirst({ where: { companyId, isDefault: true } }),
+    ]);
+
+    if (activeRoutes === 0 && !defaultTemplate) {
+      throw new BadRequestException(
+        'Each company must have at least one active routing rule or one default template',
+      );
     }
   }
 }
