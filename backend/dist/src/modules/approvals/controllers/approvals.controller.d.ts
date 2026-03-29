@@ -16,10 +16,6 @@ export declare class ApprovalsController {
         reason: "REQUIRED_REJECTION" | "SPECIFIC_APPROVER_OVERRIDE" | "HYBRID_RULE_SATISFIED" | "PERCENTAGE_RULE_SATISFIED" | "ALL_REQUIRED_STEPS_APPROVED" | "AWAITING_NEXT_STEP";
     }>;
     getExpenseChain(expenseId: string, companyId: string): Promise<{
-        template: {
-            id: string;
-            name: string;
-        } | null;
         approvals: ({
             approver: {
                 id: string;
@@ -35,11 +31,15 @@ export declare class ApprovalsController {
             isRequired: boolean;
             approverId: string;
             status: import("@prisma/client").$Enums.ApprovalStatus;
+            actionedAt: Date | null;
             isConditional: boolean;
             source: import("@prisma/client").$Enums.ApprovalActionSource;
-            actionedAt: Date | null;
             expenseId: string;
         })[];
+        template: {
+            id: string;
+            name: string;
+        } | null;
     } & {
         id: string;
         companyId: string;
@@ -51,14 +51,14 @@ export declare class ApprovalsController {
         companyCurrency: string | null;
         exchangeRateUsed: import("@prisma/client-runtime-utils").Decimal | null;
         rateTimestamp: Date | null;
-        currentApprovalStepOrder: number | null;
-        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         category: import("@prisma/client").$Enums.ExpenseCategory;
         description: string;
         date: Date;
         status: import("@prisma/client").$Enums.ExpenseStatus;
         receiptUrl: string | null;
         ocrExtracted: boolean;
+        currentApprovalStepOrder: number | null;
+        workflowMetadata: import("@prisma/client/runtime/client").JsonValue | null;
         submittedById: string;
         templateId: string | null;
         routingRuleId: string | null;
@@ -75,8 +75,8 @@ export declare class ApprovalsController {
             createdAt: Date;
             updatedAt: Date;
             stepOrder: number;
-            isRequired: boolean;
             roleLabel: string | null;
+            isRequired: boolean;
             approverId: string;
             templateId: string;
         })[];
@@ -103,8 +103,8 @@ export declare class ApprovalsController {
             createdAt: Date;
             updatedAt: Date;
             stepOrder: number;
-            isRequired: boolean;
             roleLabel: string | null;
+            isRequired: boolean;
             approverId: string;
             templateId: string;
         })[];
@@ -131,8 +131,8 @@ export declare class ApprovalsController {
             createdAt: Date;
             updatedAt: Date;
             stepOrder: number;
-            isRequired: boolean;
             roleLabel: string | null;
+            isRequired: boolean;
             approverId: string;
             templateId: string;
         })[];
@@ -172,8 +172,8 @@ export declare class ApprovalsController {
         createdAt: Date;
         updatedAt: Date;
         stepOrder: number;
-        isRequired: boolean;
         roleLabel: string | null;
+        isRequired: boolean;
         approverId: string;
         templateId: string;
     }>;
@@ -226,8 +226,8 @@ export declare class ApprovalsController {
                 createdAt: Date;
                 updatedAt: Date;
                 stepOrder: number;
-                isRequired: boolean;
                 roleLabel: string | null;
+                isRequired: boolean;
                 approverId: string;
                 templateId: string;
             })[];
