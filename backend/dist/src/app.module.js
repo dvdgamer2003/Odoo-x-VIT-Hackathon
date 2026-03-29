@@ -32,17 +32,26 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({ isGlobal: true }),
             ioredis_1.RedisModule.forRootAsync({
                 inject: [config_1.ConfigService],
-                useFactory: (config) => ({
-                    type: 'single',
-                    url: `redis://${config.get('REDIS_HOST', 'localhost')}:${config.get('REDIS_PORT', 6379)}`,
-                }),
+                useFactory: (config) => {
+                    const host = config.get('REDIS_HOST', 'localhost');
+                    const port = config.get('REDIS_PORT', 6379);
+                    const password = config.get('REDIS_PASSWORD');
+                    const url = password
+                        ? `redis://:${password}@${host}:${port}`
+                        : `redis://${host}:${port}`;
+                    return {
+                        type: 'single',
+                        url,
+                    };
+                },
             }),
             bullmq_1.BullModule.forRootAsync({
                 inject: [config_1.ConfigService],
                 useFactory: (config) => ({
                     connection: {
                         host: config.get('REDIS_HOST', 'localhost'),
-                        port: config.get('REDIS_PORT', 6379),
+                        port: parseInt(config.get('REDIS_PORT', '6379'), 10),
+                        password: config.get('REDIS_PASSWORD'),
                     },
                 }),
             }),
