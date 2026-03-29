@@ -5,8 +5,15 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { CanAccess } from '@/components/shared/can-access';
-import { LayoutDashboard, Users, CreditCard, ClipboardCheck, Settings } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Users,
+  CreditCard,
+  ClipboardCheck,
+  Settings,
+  LogOut,
+  Sparkles,
+} from 'lucide-react';
 import { dashboardPathForRole } from '@/lib/dashboard-path';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -29,81 +36,98 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const navItems = [
     { href: dashboardHref, label: 'Dashboard', icon: LayoutDashboard },
     { href: '/expenses', label: 'Expenses', icon: CreditCard },
+    ...(user?.role === 'ADMIN' || user?.role === 'MANAGER'
+      ? [{ href: '/approvals', label: 'Approvals', icon: ClipboardCheck }]
+      : []),
+    ...(user?.role === 'ADMIN'
+      ? [
+          { href: '/users', label: 'Users', icon: Users },
+          { href: '/settings', label: 'Settings', icon: Settings },
+        ]
+      : []),
   ];
 
   const isNavActive = (href: string) => {
     if (href === dashboardHref) return pathname.startsWith('/dashboard');
-    return pathname.startsWith(href);
+    return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b bg-background px-4 md:px-6">
-        <div className="flex items-center gap-2 font-bold text-lg">
-          Odoo x VIT Check
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm font-medium">{user?.name} ({user?.role})</span>
-          <Button variant="outline" size="sm" onClick={handleLogout}>
-            Logout
-          </Button>
-        </div>
-      </header>
-      <div className="flex flex-1 overflow-hidden">
-        <aside className="w-64 border-r bg-muted/40 flex-col py-6 px-4 hidden md:flex">
-          <nav className="flex-1 space-y-2">
-            {navItems.map((item) => (
-              <Link 
-                key={item.label} 
-                href={item.href}
-                className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  isNavActive(item.href)
-                    ? 'bg-primary text-primary-foreground'
-                    : 'hover:bg-muted text-muted-foreground'
-                }`}
-              >
-                <item.icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            ))}
+    <div className="min-h-screen p-3 sm:p-4">
+      <div className="app-shell min-h-[calc(100vh-1.5rem)] overflow-hidden">
+        <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border/70 bg-card/85 px-4 backdrop-blur md:px-6">
+          <div className="flex items-center gap-3">
+            <div className="grid size-8 place-items-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+              <Sparkles className="size-4" />
+            </div>
+            <div>
+              <p className="font-heading text-base leading-tight">Odoo x VIT Check</p>
+              <p className="text-xs text-muted-foreground">Reimbursement workflow hub</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <div className="hidden rounded-full border border-border/70 bg-muted/40 px-3 py-1 text-xs text-muted-foreground sm:block">
+              {user?.name} • {user?.role}
+            </div>
+            <Button variant="outline" size="sm" onClick={handleLogout}>
+              <LogOut className="mr-1.5 size-3.5" />
+              Logout
+            </Button>
+          </div>
+        </header>
 
-            <CanAccess roles={['ADMIN', 'MANAGER']}>
-              <Link 
-                href="/approvals"
-                className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  pathname.startsWith('/approvals') ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-muted-foreground'
-                }`}
-              >
-                <ClipboardCheck className="h-4 w-4" />
-                Approvals
-              </Link>
-            </CanAccess>
+        <div className="grid min-h-[calc(100vh-5.5rem)] md:grid-cols-[240px_minmax(0,1fr)]">
+          <aside className="hidden border-r border-border/70 bg-sidebar/55 p-4 md:block">
+            <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground/90">
+              Navigation
+            </p>
+            <nav className="space-y-1">
+              {navItems.map((item) => {
+                const active = isNavActive(item.href);
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all ${
+                      active
+                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        : 'text-muted-foreground hover:bg-muted/80 hover:text-foreground'
+                    }`}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <span className="font-medium">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </aside>
 
-            <CanAccess roles={['ADMIN']}>
-              <Link 
-                href="/users"
-                className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  pathname.startsWith('/users') ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-muted-foreground'
-                }`}
-              >
-                <Users className="h-4 w-4" />
-                Users
-              </Link>
-              <Link 
-                href="/settings"
-                className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  pathname.startsWith('/settings') ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-muted-foreground'
-                }`}
-              >
-                <Settings className="h-4 w-4" />
-                Settings
-              </Link>
-            </CanAccess>
-          </nav>
-        </aside>
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-background">
-          {children}
-        </main>
+          <main className="overflow-y-auto p-4 pb-24 md:p-6 md:pb-6">
+            <div className="page-enter">{children}</div>
+          </main>
+        </div>
+
+        <nav className="fixed inset-x-3 bottom-3 z-40 rounded-2xl border border-border/70 bg-card/95 p-1.5 shadow-xl backdrop-blur md:hidden">
+          <div className="grid grid-cols-4 gap-1">
+            {navItems.slice(0, 4).map((item) => {
+              const active = isNavActive(item.href);
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={`flex flex-col items-center justify-center rounded-xl px-2 py-2 text-[11px] transition-colors ${
+                    active
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  }`}
+                >
+                  <item.icon className="mb-1 size-4" />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
       </div>
     </div>
   );

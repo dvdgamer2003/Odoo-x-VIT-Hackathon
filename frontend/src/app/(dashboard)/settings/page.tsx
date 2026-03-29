@@ -2,24 +2,15 @@
 
 import * as React from 'react';
 import { useTemplates, useCreateTemplate } from '@/hooks/useApprovals';
-import { useUsers } from '@/hooks/useUsers';
 import { SkeletonTable } from '@/components/shared/skeleton';
 import { Button } from '@/components/ui/button';
-import { ShieldAlert, Trash, Plus } from 'lucide-react';
+import { ShieldAlert, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { toast } from 'sonner';
 
 export default function SettingsTemplatesPage() {
   const { data: templates, isLoading } = useTemplates();
-  const { data: users } = useUsers();
   const createMutation = useCreateTemplate();
   
   const [name, setName] = React.useState('');
@@ -39,12 +30,12 @@ export default function SettingsTemplatesPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
-      <div>
+         <div className="surface-elevated px-4 py-4">
         <h1 className="text-2xl font-bold tracking-tight">Approval Templates</h1>
         <p className="text-muted-foreground mt-1 text-sm">Design workflows for expense approvals based on rules</p>
       </div>
 
-      <Card>
+         <Card className="border-border/80 bg-card/90">
          <CardHeader>
            <CardTitle>Create Template</CardTitle>
            <CardDescription>A template defines the route and people an expense must pass through</CardDescription>
@@ -66,7 +57,7 @@ export default function SettingsTemplatesPage() {
 
       <div className="grid gap-6">
         {templates?.map((t: any) => (
-           <Card key={t.id} className="relative overflow-hidden group">
+           <Card key={t.id} className="group relative overflow-hidden border-border/80 bg-card/90">
               {t.isDefault && (
                 <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs px-2 py-1 rounded font-bold uppercase tracking-wider">
                   Default Fallback

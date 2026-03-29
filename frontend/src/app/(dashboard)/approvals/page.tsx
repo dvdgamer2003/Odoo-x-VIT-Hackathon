@@ -49,15 +49,15 @@ export default function ApprovalsPage() {
 
   return (
     <div className="space-y-6 flex flex-col h-full">
-      <div className="flex items-center justify-between">
+      <div className="surface-elevated flex items-center justify-between px-4 py-4">
         <h1 className="text-2xl font-bold tracking-tight">Pending Approvals</h1>
-        <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold">
+        <div className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
           {expenses.length} Pending
         </div>
       </div>
 
       {expenses.length === 0 ? (
-        <Card className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground border-dashed">
+        <Card className="flex flex-col items-center justify-center border-dashed p-12 text-center text-muted-foreground">
           <CheckCircle2 className="w-12 h-12 mb-4 text-muted" />
           <CardTitle className="text-xl">All caught up!</CardTitle>
           <CardDescription className="mt-2 text-base">You have no pending expense approvals requiring your attention.</CardDescription>
@@ -65,8 +65,8 @@ export default function ApprovalsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {expenses.map((e: any) => (
-            <Card key={e.id} className="shadow-sm hover:shadow-md transition-shadow flex flex-col">
-              <CardHeader className="pb-3 border-b bg-muted/20">
+            <Card key={e.id} className="flex flex-col border-border/75 bg-card/90 shadow-sm transition-shadow hover:shadow-md">
+              <CardHeader className="border-b border-border/70 bg-muted/20 pb-3">
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-lg">{e.submittedBy.name}</CardTitle>

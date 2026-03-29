@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-manrope);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-space-grotesk);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -49,38 +49,38 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --background: oklch(0.985 0.01 95);
+  --foreground: oklch(0.28 0.03 248);
+  --card: oklch(0.998 0.008 92);
+  --card-foreground: oklch(0.24 0.03 248);
+  --popover: oklch(1 0.006 92);
+  --popover-foreground: oklch(0.24 0.03 248);
+  --primary: oklch(0.55 0.16 235);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --secondary: oklch(0.96 0.02 214);
+  --secondary-foreground: oklch(0.33 0.04 248);
+  --muted: oklch(0.95 0.02 105);
+  --muted-foreground: oklch(0.52 0.03 247);
+  --accent: oklch(0.9 0.08 72);
+  --accent-foreground: oklch(0.32 0.05 36);
+  --destructive: oklch(0.63 0.23 25);
+  --border: oklch(0.9 0.015 214);
+  --input: oklch(0.92 0.015 214);
+  --ring: oklch(0.6 0.14 235);
+  --chart-1: oklch(0.64 0.16 235);
+  --chart-2: oklch(0.72 0.16 160);
+  --chart-3: oklch(0.72 0.14 70);
+  --chart-4: oklch(0.67 0.16 30);
+  --chart-5: oklch(0.57 0.11 290);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar: oklch(0.98 0.012 210);
+  --sidebar-foreground: oklch(0.31 0.03 248);
+  --sidebar-primary: oklch(0.55 0.16 235);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-accent: oklch(0.94 0.03 92);
+  --sidebar-accent-foreground: oklch(0.31 0.03 248);
+  --sidebar-border: oklch(0.88 0.015 214);
+  --sidebar-ring: oklch(0.62 0.13 235);
 }
 
 .dark {
@@ -121,10 +121,54 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
-    @apply font-sans;
+    @apply font-sans scroll-smooth;
+  }
+  body {
+    @apply min-h-screen bg-background text-foreground;
+    background-image: radial-gradient(circle at 5% 10%, oklch(0.95 0.05 90) 0%, transparent 28%),
+      radial-gradient(circle at 88% 12%, oklch(0.95 0.04 220) 0%, transparent 30%),
+      linear-gradient(180deg, oklch(0.99 0.008 95) 0%, oklch(0.97 0.01 102) 100%);
+    background-attachment: fixed;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply rounded-2xl border border-border/90 bg-card/80 shadow-[0_16px_50px_-24px_oklch(0.38_0.09_248_/_0.6)] backdrop-blur;
+  }
+
+  .surface-elevated {
+    @apply rounded-xl border border-border/85 bg-card/90 shadow-sm backdrop-blur;
+  }
+
+  .metric-card {
+    @apply relative overflow-hidden rounded-2xl border border-border/80 bg-card/90 p-5 shadow-[0_8px_20px_-14px_oklch(0.4_0.08_248_/_0.55)];
+  }
+
+  .metric-card::after {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary/80 via-primary/45 to-accent/80;
+  }
+
+  .page-enter {
+    animation: page-enter 420ms ease-out both;
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

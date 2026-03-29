@@ -22,7 +22,7 @@ export function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div className="surface-elevated flex flex-col gap-3 px-4 py-5 sm:flex-row sm:items-end sm:justify-between sm:px-5">
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
             <Shield className="h-7 w-7 text-primary" />
@@ -43,7 +43,7 @@ export function AdminDashboard() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="shadow-sm">
+        <Card className="metric-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total approved volume</CardTitle>
             <Banknote className="h-4 w-4 text-muted-foreground" />
@@ -60,7 +60,7 @@ export function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="metric-card border-yellow-400/40">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pending company-wide</CardTitle>
             <Clock className="h-4 w-4 text-yellow-500" />
@@ -71,7 +71,7 @@ export function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="metric-card border-emerald-400/40">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Approved (count)</CardTitle>
             <CheckCircle className="h-4 w-4 text-green-500" />

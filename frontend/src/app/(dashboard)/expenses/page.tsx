@@ -7,7 +7,7 @@ import { SkeletonTable } from '@/components/shared/skeleton';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { format } from 'date-fns';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 
 export default function ExpensesPage() {
   const [statusFilter, setStatusFilter] = React.useState<string>('');
@@ -19,7 +19,7 @@ export default function ExpensesPage() {
 
   return (
     <div className="space-y-6 flex flex-col h-full">
-      <div className="flex items-center justify-between">
+      <div className="surface-elevated flex flex-wrap items-center justify-between gap-3 px-4 py-4">
         <h1 className="text-2xl font-bold tracking-tight">My Expenses</h1>
         <Button asChild>
           <Link href="/expenses/new">
@@ -28,7 +28,7 @@ export default function ExpensesPage() {
         </Button>
       </div>
 
-      <div className="flex gap-2">
+      <div className="surface-elevated flex flex-wrap gap-2 px-3 py-3">
         <Button
           variant={statusFilter === '' ? 'default' : 'outline'}
           size="sm"
@@ -59,10 +59,10 @@ export default function ExpensesPage() {
         </Button>
       </div>
 
-      <Card className="flex-1 shadow-sm overflow-hidden">
+      <Card className="flex-1 overflow-hidden border-border/80 bg-card/90 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="bg-muted text-muted-foreground">
+            <thead className="bg-muted/60 text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 font-medium">Date</th>
                 <th className="px-4 py-3 font-medium">Description</th>
