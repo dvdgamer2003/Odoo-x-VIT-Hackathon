@@ -10,3 +10,14 @@ yarn-error.log*
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Environment Variables
+.env
+.env.local
+
+# Build artifacts
+backend/dist/
+backend/node_modules/
+frontend/.next/
+frontend/node_modules/
+*.tsbuildinfo

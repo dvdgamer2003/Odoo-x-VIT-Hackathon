@@ -14,13 +14,15 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const adapter_pg_1 = require("@prisma/adapter-pg");
 const client_1 = require("@prisma/client");
+const pg_1 = require("pg");
 let PrismaService = class PrismaService extends client_1.PrismaClient {
     constructor(configService) {
         const connectionString = configService.get('DATABASE_URL')?.trim();
         if (!connectionString) {
             throw new Error('DATABASE_URL must be set');
         }
-        const adapter = new adapter_pg_1.PrismaPg(connectionString);
+        const pool = new pg_1.Pool({ connectionString });
+        const adapter = new adapter_pg_1.PrismaPg(pool);
         super({ adapter });
     }
     async onModuleInit() {

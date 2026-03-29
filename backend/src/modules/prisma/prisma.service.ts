@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import { Pool } from 'pg';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -10,7 +11,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     if (!connectionString) {
       throw new Error('DATABASE_URL must be set');
     }
-    const adapter = new PrismaPg(connectionString);
+    const pool = new Pool({ connectionString });
+    const adapter = new PrismaPg(pool);
     super({ adapter });
   }
 
